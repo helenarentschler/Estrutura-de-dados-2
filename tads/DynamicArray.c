@@ -13,7 +13,7 @@ void inserirAluno(int ra, float nota, DynamicArray* vetor) {
 		
 	} else {
 	
-		Aluno* novoVetor = (Aluno*) realloc(vetor->alunos, (vetor->capacidade)*2);
+		Aluno* novoVetor = (Aluno*) realloc(vetor->alunos, (vetor->capacidade)*2*sizeof(Aluno));
 
 		if(novoVetor) {
 			vetor->alunos = novoVetor;

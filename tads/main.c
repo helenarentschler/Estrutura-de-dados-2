@@ -8,7 +8,7 @@ int main() {
 	DynamicArray alunos;
 	alunos.alunos = (Aluno*) malloc(sizeof(Aluno));
 	alunos.i = 0;
-	alunos.capacidade = 10;
+	alunos.capacidade = 2;
 
 	int ra;
 	float nota;
@@ -26,6 +26,8 @@ int main() {
 	exibirAlunos(alunos);
 
 	buscarAluno(alunos, 4);
+
+	printf("Capacidade do vetor: %d", alunos.capacidade);
 	
 	return 0;
 }
