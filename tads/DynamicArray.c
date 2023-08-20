@@ -6,14 +6,13 @@
 void inserirAluno(int ra, float nota, DynamicArray* vetor) {
 	
 	if(vetor->i < vetor->capacidade) {
-	
-		(vetor->i)++;
-		definirRa((vetor->alunos + vetor->i), ra);
-		definirNota((vetor->alunos + vetor->i), nota);
+
+		vetor->alunos[vetor->i] = criarAluno(ra, nota);
+		(vetor->i)++;		
 		
 	} else {
 	
-		Aluno* novoVetor = (Aluno*) realloc(vetor->alunos, (vetor->capacidade)*2*sizeof(Aluno));
+		Aluno** novoVetor = (Aluno**) realloc(vetor->alunos, (vetor->capacidade)*2*sizeof(Aluno*));
 
 		if(novoVetor) {
 			vetor->alunos = novoVetor;
@@ -33,8 +32,9 @@ void exibirAlunos(DynamicArray vetor) {
 	for(int cont = 0; cont < vetor.i; cont++) {
 
 		printf("\n----------\n");
-		exibirRa((vetor.alunos + cont));
-		exibirNota((vetor.alunos + cont));
+		
+		exibirRa(*(vetor.alunos + cont));
+		exibirNota(*(vetor.alunos + cont));
 	}
 }
 
@@ -42,11 +42,11 @@ void buscarAluno(DynamicArray vetor, int ra) {
 
 	for(int cont = 0; cont < vetor.i; cont++) {
 
-		if((vetor.alunos + cont)->ra == ra) {
+		/**if((vetor.alunos + cont)->ra == ra) {
 
 			printf("Aluno: Ra - %d Nota: %f", ra, (vetor.alunos + cont)->nota);
 			return;
-		}
+		}**/
 	}
 
 	printf("Aluno nao encontrado\n");

@@ -6,7 +6,7 @@ typedef struct {
 	float nota;
 } Aluno;
 
-Aluno* criarAluno();
+Aluno* criarAluno(int ra, float nota);
 void destruirAluno(Aluno* aluno);
 void definirRa(Aluno* aluno, int ra);
 void definirNota(Aluno* aluno, float nota);

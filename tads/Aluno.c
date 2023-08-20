@@ -2,6 +2,22 @@
 #include <stdlib.h>
 #include "Aluno.h"
 
+Aluno* criarAluno(int ra, float nota) {
+
+	Aluno* aluno = (Aluno*) malloc(sizeof(Aluno));
+
+	if(aluno) {
+
+		aluno->ra = ra;
+		aluno->nota = nota;		
+
+	} else {
+	
+		printf("Nao foi possivel alocar memoria\n");
+	}
+
+	return aluno;
+}
 
 void definirRa(Aluno* aluno, int ra) {
 

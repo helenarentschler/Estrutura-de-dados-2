@@ -4,7 +4,7 @@
 #include "Aluno.h"
 
 typedef struct {
-	Aluno* alunos;
+	Aluno** alunos;
 	int capacidade;
 	int i;
 } DynamicArray;

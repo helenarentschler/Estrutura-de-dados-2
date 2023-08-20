@@ -6,9 +6,10 @@
 int main() {
 
 	DynamicArray alunos;
-	alunos.alunos = (Aluno*) malloc(sizeof(Aluno));
+	//Alocando um vetor de 3 ponteiros para aluno. Retorna ponteiro para o 1 ponteiro de aluno
+	alunos.alunos = (Aluno**) malloc(sizeof(Aluno*)*3);
 	alunos.i = 0;
-	alunos.capacidade = 2;
+	alunos.capacidade = 3;
 
 	int ra;
 	float nota;
