@@ -39,3 +39,7 @@ void exibirNota(Aluno* aluno) {
 	printf("Nota do aluno: %f\n", aluno->nota);
 }
 
+void destruirAluno(Aluno* aluno){
+
+	free(aluno);
+}

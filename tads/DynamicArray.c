@@ -42,12 +42,26 @@ void buscarAluno(DynamicArray vetor, int ra) {
 
 	for(int cont = 0; cont < vetor.i; cont++) {
 
-		/**if((vetor.alunos + cont)->ra == ra) {
+		if((*vetor.alunos + cont)->ra == ra) {
 
-			printf("Aluno: Ra - %d Nota: %f", ra, (vetor.alunos + cont)->nota);
+			printf("Aluno: Ra - %d Nota: %f", ra, (*vetor.alunos + cont)->nota);
 			return;
-		}**/
+		}
 	}
 
+	printf("Aluno nao encontrado\n");
+}
+
+void excluirAluno(int ra, DynamicArray* vetor) {
+	
+	for(int cont = 0; cont < vetor->i; cont++) {
+
+		if((*vetor->alunos + cont)->ra == ra) {
+
+			destruirAluno((*vetor->alunos + cont));
+			return;
+		}
+	}
+	
 	printf("Aluno nao encontrado\n");
 }
