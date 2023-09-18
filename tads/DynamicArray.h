@@ -15,4 +15,6 @@ void exibirAlunos(DynamicArray vetor);
 
 void buscarAluno(DynamicArray vetor, int ra);
 
+void excluirAluno(int ra, DynamicArray* vetor);
+
 #endif
