@@ -45,7 +45,7 @@ int calcularAltura(Nodo* no) {
 }
 
 
-//enviado no raiz
+//enviando o no cujo nivel seja retornado 
 int calcularNivel(Nodo* no) {
 
 	if(!no) {
@@ -57,6 +57,10 @@ int calcularNivel(Nodo* no) {
 
 //param: raiz da arvore e chave para inserir
 Nodo* inserirNodo(Nodo* no, int chave) {
+
+	if (no == NULL){
+        return criarNodo(chave);
+    }
 
 	//se a chave enviada for maior que a raiz(subraiz)
 	if(chave > no->chave){
