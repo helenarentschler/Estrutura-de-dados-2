@@ -83,24 +83,23 @@ void imprimirArvoreArquivo(FILE* arquivo, Nodo* no){
 // param: endereço da raiz da arvore, chave para busca
 Nodo* buscarNodo(Nodo* no, int chave) {
 
+	//se o nodo for nulo, retorna nulo
+	if(!no) {
+		return NULL;
+	}
+
+	//se encontrou o nodo correspondente a chave, retorna o endereço dele
 	if(no->chave == chave) {
 		return no;
 	}
 
+	//se a chave de pesquisa for maior que a chave do nodo
 	if(chave > no->chave){
-
-		if(!no->direita) {
-			return NULL;
-		}
-
+		//buscar a raiz a partir do nodo da direita 
 		buscarNodo(no->direita, chave);
 		
 	} else {
-
-		if(!no->esquerda) {
-			return NULL;
-		}
-		
+		// caso contrario, buscar a raiz a partir do nodo da esquerda
 		buscarNodo(no->esquerda, chave);
 	}
 }
@@ -112,13 +111,13 @@ int removerNodoCaso1e2(Nodo** raiz, Nodo* no) {
 	if(no->pai) {
 
 		char filho;	
-		//verificando se o no a ser excluido é o filho da esquerda ou da direita:
+		//verificando se o nodo a ser excluido é o filho da esquerda ou da direita, guardando numa flag filho
 		filho = no->pai->esquerda == no ? 'e' : 'd';
 
 		//caso 1: nodo folha, sem filhos
 		if(!no->direita && !no->esquerda) {
 	
-			//anula o filho da direita ou esquerda do pai
+			//anula o filho da direita ou esquerda 
 			(filho == 'e') ? (no->pai->esquerda = NULL) : (no->pai->direita = NULL);
 		
 			free(no);
@@ -128,7 +127,7 @@ int removerNodoCaso1e2(Nodo** raiz, Nodo* no) {
 		//caso 2: no tem filho a esquerda
 		} else if(!no->direita) {
 
-			//atualiza o pai
+			//campo pai do filho da esquerda rece o nodo "avo"
 			no->esquerda->pai = no->pai;
 			//atualiza o filho da direita ou esquerda
 			(filho == 'e') ? (no->pai->esquerda = no->esquerda) : (no->pai->direita = no->esquerda);
@@ -224,15 +223,14 @@ int main() {
 
 	FILE* entrada = fopen("in.txt", "r");
 
-	int ret = 0, chave = 0;
+	int chave = 0;
 
 	char op;
 
 	Nodo* raiz = NULL;
 
-	while(ret != EOF) {
 
-		ret = fscanf(entrada, "%c %d\n", &op, &chave);
+	while(fscanf(entrada, "%c %d\n", &op, &chave) != EOF) {
 
 		if(op == 'i') {
 
