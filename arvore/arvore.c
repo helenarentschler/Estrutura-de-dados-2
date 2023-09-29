@@ -1,3 +1,5 @@
+// AP1 - Helena Rentschler - RA: 2539527
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -10,6 +12,44 @@ typedef struct No {
 	struct No* pai;
 
 } Nodo;
+
+Nodo* criarNodo(int chave);
+Nodo* inserirNodo(Nodo* no, int chave);
+void imprimirArvoreArquivo(FILE* arquivo, Nodo* no);
+Nodo* buscarNodo(Nodo* no, int chave);
+int removerNodoCaso1e2(Nodo** raiz, Nodo* no);
+void removerNodo(Nodo** raiz, int chave);
+
+int main() {
+
+	FILE* entrada = fopen("in.txt", "r");
+
+	int chave = 0;
+
+	char op;
+
+	Nodo* raiz = NULL;
+
+	//lendo arquivo de entrada
+	while(fscanf(entrada, "%c %d\n", &op, &chave) != EOF) {
+
+		if(op == 'i') {
+
+			raiz = inserirNodo(raiz, chave);
+			
+		} else if(op == 'r'){
+
+			removerNodo(&raiz, chave);
+		}
+	}
+
+	FILE* saida = fopen("out.txt", "w");
+
+	//escrevendo no arquivo de saida
+	imprimirArvoreArquivo(saida, raiz);
+	
+	return 0;
+}
 
 //funçao: cria um nodo nodo na memoria
 //param: chave
@@ -53,19 +93,6 @@ Nodo* inserirNodo(Nodo* no, int chave) {
 	return no;
 }
 
-//funçao: impressao em ordem no terminal para vizualizaçao rapida
-// param: endereço da raiz da arvore
-void imprimirArvoreTerminal(Nodo* no){
-
-	if(!no) {
-		return;	
-	}
-
-	imprimirArvoreTerminal(no->esquerda);
-	printf("%d \n", no->chave);
-	imprimirArvoreTerminal(no->direita);
-}
-
 //funçao: impressao em ordem no arquivo de saida
 // param: ponteiro para arquivo de saida e endereço da raiz da arvore
 void imprimirArvoreArquivo(FILE* arquivo, Nodo* no){
@@ -104,6 +131,7 @@ Nodo* buscarNodo(Nodo* no, int chave) {
 	}
 }
 
+//funçao: tenta remover um nodo caso 1 e 2. Se conseguir, retorna 1
 // param: ponteiro para o ponteiro arvore da main, nodo a ser removido
 int removerNodoCaso1e2(Nodo** raiz, Nodo* no) {
 
@@ -119,29 +147,35 @@ int removerNodoCaso1e2(Nodo** raiz, Nodo* no) {
 	
 			//anula o filho da direita ou esquerda 
 			(filho == 'e') ? (no->pai->esquerda = NULL) : (no->pai->direita = NULL);
-		
+
+			//remove nodo
 			free(no);
 			
 			return 1;
 	
-		//caso 2: no tem filho a esquerda
+		//caso 2: nodo tem filho a esquerda
 		} else if(!no->direita) {
 
-			//campo pai do filho da esquerda rece o nodo "avo"
+			//campo pai do filho da esquerda recebe o nodo "avo"
 			no->esquerda->pai = no->pai;
-			//atualiza o filho da direita ou esquerda
+			//no->pai recebe o "neto" a esquerda ou direita (com base na flag)
 			(filho == 'e') ? (no->pai->esquerda = no->esquerda) : (no->pai->direita = no->esquerda);
-		
+
+			//remove nodo
 			free(no);
 			
 			return 1;
 			
-		//caso 2: no tem filho a direita
+		//caso 2: nodo tem filho a direita
 		} else if(!no->esquerda) {
 		
+			//campo pai do filho da direita recebe o nodo "avo"	
 			no->direita->pai = no->pai;
+
+			//no->pai recebe o "neto" a esquerda ou direita (com base na flag)
 			(filho == 'e') ? (no->pai->esquerda = no->direita) : (no->pai->direita = no->direita);
-	
+
+			//remove nodo
 			free(no);
 			
 			return 1;
@@ -192,62 +226,37 @@ int removerNodoCaso1e2(Nodo** raiz, Nodo* no) {
 // param: raiz da arvore, chave para busca
 void removerNodo(Nodo** raiz, int chave) {
 
-	//busca chave na arvore
-	Nodo* encontrado = buscarNodo(*raiz, chave);
+	//ponteiro para o retonro da busca
+	Nodo* encontrado;
+	
+	do {
+		//busca chave na arvore
+		encontrado = buscarNodo(*raiz, chave);
 
-	//caso retorne um nodo encontrado
-	if(encontrado) {
+		//caso retorne um nodo encontrado
+		if(encontrado) {
 
-		//tenta remover para o caso 1 e 2
-		if(!removerNodoCaso1e2(raiz, encontrado)) {
+			//tenta remover para o caso 1 e 2
+			if(!removerNodoCaso1e2(raiz, encontrado)) {
 
-			//caso 3: comeca a busca pelo sucessor pelo filho da direita
-			Nodo* sucessor = encontrado->direita;
+				//caso 3: comeca a busca pelo sucessor pelo filho da direita
+				Nodo* sucessor = encontrado->direita;
 
-			//enquanto tiver filhos a esquerda
-			while(sucessor->esquerda) {
+				//enquanto tiver filhos a esquerda
+				while(sucessor->esquerda) {
 
-				sucessor = sucessor->esquerda;
-			}
+					sucessor = sucessor->esquerda;
+				}
 
-			//troca a chave do nodo encontrado pela chave do sucessor
-			encontrado->chave = sucessor->chave;
+				//troca a chave do nodo encontrado pela chave do sucessor
+				encontrado->chave = sucessor->chave;
 
-			//remove nodo sucessor da arvore
-			removerNodoCaso1e2(raiz, sucessor);
-		}	
-	} 
+				//remove nodo sucessor da arvore
+				removerNodoCaso1e2(raiz, sucessor);
+			}	
+		} 
+		
+	} while(encontrado); // repete a busca enquanto houver instancias da chave na arvore 
 }
 
-int main() {
-
-	FILE* entrada = fopen("in.txt", "r");
-
-	int chave = 0;
-
-	char op;
-
-	Nodo* raiz = NULL;
-
-
-	while(fscanf(entrada, "%c %d\n", &op, &chave) != EOF) {
-
-		if(op == 'i') {
-
-			raiz = inserirNodo(raiz, chave);
-			
-		} else if(op == 'r'){
-
-			removerNodo(&raiz, chave);
-		}
-	}
-
-	FILE* saida = fopen("out.txt", "w");
-
-	imprimirArvoreArquivo(saida, raiz);
-	
-	imprimirArvoreTerminal(raiz);
-	
-	return 0;
-}
 
