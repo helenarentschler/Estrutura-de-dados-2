@@ -1,24 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// definiçao do tipo nodo
 typedef struct No {
 
 	int chave;
+	int fatorB;
 	struct No* esquerda;
 	struct No* direita;
 	struct No* pai;
-
 } Nodo;
 
-//funçao: cria um nodo nodo na memoria
-//param: chave
+
 Nodo* criarNodo(int chave){
 
 	Nodo* novo = (Nodo*) malloc(sizeof(Nodo));
 
 	if(novo) {
 		novo->chave = chave;
+		novo->fatorB = 0;
 		novo->esquerda = NULL;
 		novo->direita = NULL;
 		novo->pai = NULL;
@@ -27,60 +26,119 @@ Nodo* criarNodo(int chave){
 	return novo;
 }
 
-//funçao: inserçao do nodo correspodnente a chave enviada na arvore
-//param: endereço da raiz e chave para inserir
+int calcularAltura(Nodo* no) {
+
+	// se foi enviado NULL, quer dizer que o no pai tem altura 0 (-1 +1)
+	if(!no) {
+		return -1;
+	}
+
+	// se o no nao tem filhos, retorna 0 (sua propria altura é 0)
+	if(!no->esquerda && !no->direita) {
+		return 0;
+	}
+
+	int soma_esq = 1 + calcularAltura(no->esquerda);
+	int soma_dir = 1 + calcularAltura(no->direita);
+
+	// envia o valor maior de altura da subarvore
+	return soma_esq > soma_dir ?  soma_esq :  soma_dir;
+}
+
+//enviando o no cujo nivel seja retornado 
+int calcularNivel(Nodo* no) {
+
+	if(!no) {
+		return -1;
+	}
+
+	return 1 + calcularNivel(no->pai);
+}
+
+int calcularFatorB(Nodo* raiz) {
+
+	if(!raiz) {
+		return -1;
+	}
+
+	int soma_esq = 1 + calcularFatorB(raiz->esquerda);
+	int soma_dir = 1 + calcularFatorB(raiz->direita);
+
+	raiz->fatorB = soma_dir - soma_esq;
+
+	return soma_esq > soma_dir ?  soma_esq :  soma_dir;
+}
+
+//param: raiz da arvore e chave para inserir
 Nodo* inserirNodo(Nodo* no, int chave) {
 
-	//nodo nulo, retorna endereço para novo nodo criado
+	//ARRUMAR
 	if (no == NULL){
         return criarNodo(chave);
     }
 
-	//se a chave enviada for maior que o nodo
+	//se a chave enviada for maior que a raiz(subraiz)
 	if(chave > no->chave){
-		//nodo->direita recebe chamada recursiva
-		no->direita = inserirNodo(no->direita, chave);
-		//recursao resolvida: define o pai do novo nodo
-		no->direita->pai = no;
+
+		//checar se existe no à direita, se nao existir insere a chave
+		if(!no->direita) {
+
+			Nodo* novo = criarNodo(chave);
+			no->direita = novo;
+			novo->pai = no; 
+			return novo;
+		}
+
+		//se existir, enviar o no a direita para comparaçao
+		inserirNodo(no->direita, chave);
+
 	} else {
-		//o mesmo para a esquerda
-		no->esquerda = inserirNodo(no->esquerda, chave);	
-		no->esquerda->pai = no;
-	}
 
-	//retorna o nodo para as execuçoes anteriores, ja que o nodo na execuçao posterior
-	//é sempre o filho da anterior
-	return no;
+		if(!no->esquerda) {
+		
+			Nodo* novo = criarNodo(chave);
+			no->esquerda = novo;
+			novo->pai = no; 
+			return novo;
+		}
+
+		inserirNodo(no->esquerda, chave);	
+	}
 }
 
-//funçao: impressao em ordem no terminal para vizualizaçao rapida
-// param: endereço da raiz da arvore
-void imprimirArvoreTerminal(Nodo* no){
+Nodo* inserirNodo2(Nodo* raiz, int chave) {
+
+	if(!raiz) {
+
+		return criarNodo(chave);
+	}
+
+	if(chave > raiz->chave) {
+
+		raiz->direita = inserirNodo2(raiz->direita, chave);
+
+	} else {
+
+		raiz->esquerda = inserirNodo2(raiz->esquerda, chave);	
+	}
+
+	return raiz;
+	
+}
+
+void imprimirArvore(Nodo* no){
 
 	if(!no) {
 		return;	
 	}
 
-	imprimirArvoreTerminal(no->esquerda);
-	printf("%d \n", no->chave);
-	imprimirArvoreTerminal(no->direita);
+	imprimirArvore(no->esquerda);
+	printf("Chave: %d ---", no->chave);
+	printf("Fator Balanceamento: %d \n", no->fatorB);
+	imprimirArvore(no->direita);
 }
 
-//funçao: impressao em ordem no arquivo de saida
-// param: ponteiro para arquivo de saida e endereço da raiz da arvore
-void imprimirArvoreArquivo(FILE* arquivo, Nodo* no){
-
-	if(!no) {
-		return;	
-	}
-
-	imprimirArvoreArquivo(arquivo, no->esquerda);
-	fprintf(arquivo,"%d\n", no->chave);
-	imprimirArvoreArquivo(arquivo, no->direita);
-}
-
-// funçao: busca binaria de um nodo por chave
-// param: endereço da raiz da arvore, chave para busca
+// param: raiz, chave para busca
 Nodo* buscarNodo(Nodo* no, int chave) {
 
 	if(no->chave == chave) {
@@ -105,7 +163,7 @@ Nodo* buscarNodo(Nodo* no, int chave) {
 	}
 }
 
-// param: ponteiro para o ponteiro arvore da main, nodo a ser removido
+// param: nodo a ser removido
 int removerNodoCaso1e2(Nodo** raiz, Nodo* no) {
 
 	//verifica se nao é o nodo raiz
@@ -164,7 +222,7 @@ int removerNodoCaso1e2(Nodo** raiz, Nodo* no) {
 	
 		//caso 2: nodo tem filho a esquerda
 		} else if(!no->direita) {
-			//ponteiro para arvore da main recebe o filho a esquerda
+			//ponteiro para arvore da main receb o filho a esquerda
 			*raiz = no->esquerda;
 			//nova raiz tem pai nulo
 			no->esquerda->pai = NULL;  
@@ -216,39 +274,63 @@ void removerNodo(Nodo** raiz, int chave) {
 
 			//remove nodo sucessor da arvore
 			removerNodoCaso1e2(raiz, sucessor);
-		}	
-	} 
+		}
+		
+	} else {
+		printf("Nodo %d nao encontrado.\n", chave);
+	}
 }
+
+
 
 int main() {
 
-	FILE* entrada = fopen("in.txt", "r");
+	Nodo* arvore = criarNodo(10);
+	
+	int op, chave;
 
-	int ret = 0, chave = 0;
+	while(op != 5) {
 
-	char op;
+		printf("Escreva a opçao desejada: \n");
+		printf("1 - Inserçao\n");
+		printf("2 - Busca \n");
+		printf("3 - Remoçao \n");
+		printf("4 - Imprimir arvore \n");
+		printf("5 - Sair \n");
+		
+		scanf("%d", &op);
 
-	Nodo* raiz = NULL;
+		switch(op) {
+			case 1:
+				printf("Chave para inserir: ");
+				scanf("%d", &chave);
+				inserirNodo(arvore, chave);
+				calcularFatorB(arvore);
+			break;
+			case 2:
+				printf("Chave para buscar: ");
+				scanf("%d", &chave);
+				Nodo* achado = buscarNodo(arvore, chave);
 
-	while(ret != EOF) {
-
-		ret = fscanf(entrada, "%c %d\n", &op, &chave);
-
-		if(op == 'i') {
-
-			raiz = inserirNodo(raiz, chave);
-			
-		} else if(op == 'r'){
-
-			removerNodo(&raiz, chave);
+				if(achado) {
+					printf("endereço: %p", achado);
+				} else {
+					printf("nao foi encontrado");
+				}
+			break;
+			case 3:
+				printf("Chave para remover: ");
+				scanf("%d", &chave);
+				removerNodo(&arvore, chave);
+			break;
+			case 4:
+				imprimirArvore(arvore);
+			break;
+			case 5:
+				printf("saindo...");
+			break;
 		}
 	}
-
-	FILE* saida = fopen("out.txt", "w");
-
-	imprimirArvoreArquivo(saida, raiz);
-	
-	imprimirArvoreTerminal(raiz);
 	
 	return 0;
 }
