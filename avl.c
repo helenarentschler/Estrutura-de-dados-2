@@ -4,11 +4,28 @@
 typedef struct No {
 
 	int chave;
+	int altEsquerda;
+	int altDireita;
 	struct No* esquerda;
 	struct No* direita;
 	struct No* pai;
-
 } Nodo;
+
+Nodo* criarNodo(int chave);
+int calcularAltura(Nodo* no);
+int calcularNivel(Nodo* no);
+Nodo* inserirNodo(Nodo* no, int chave);
+void imprimirArvoreTerminal(Nodo* no);
+Nodo* buscarNodo(Nodo* no, int chave);
+int removerNodoCaso1e2(Nodo** raiz, Nodo* no);
+void removerNodo(Nodo** raiz, int chave);
+
+int main() {
+
+	Nodo* raiz = criarNodo(0);
+	
+	return 0;
+}
 
 
 Nodo* criarNodo(int chave){
@@ -17,6 +34,8 @@ Nodo* criarNodo(int chave){
 
 	if(novo) {
 		novo->chave = chave;
+		novo->altEsquerda = 0;
+		novo->altDireita = 0;
 		novo->esquerda = NULL;
 		novo->direita = NULL;
 		novo->pai = NULL;
@@ -100,18 +119,6 @@ void imprimirArvoreTerminal(Nodo* no){
 	printf("%d \n", no->chave);
 	imprimirArvoreTerminal(no->direita);
 }
-
-void imprimirArvoreArquivo(FILE* arquivo, Nodo* no){
-
-	if(!no) {
-		return;	
-	}
-
-	imprimirArvoreArquivo(arquivo, no->esquerda);
-	fprintf(arquivo,"%d\n", no->chave);
-	imprimirArvoreArquivo(arquivo, no->direita);
-}
-
 
 // param: raiz, chave para busca
 Nodo* buscarNodo(Nodo* no, int chave) {
@@ -256,41 +263,117 @@ void removerNodo(Nodo** raiz, int chave) {
 	}
 }
 
+Nodo* rotacionarEsquerda(Nodo* x){
 
+	//rotacionando
 
-int main() {
+	Nodo* y = x->direita;
+	Nodo* aux = y->esquerda;
+	x->direita = aux;
+	y->esquerda = x;
 
-	FILE* entrada = fopen("in.txt", "r");
+	//ajuste de alturas
 
-	int ret = 0, chave = 0;
+	//atualiza altura direita do x de acordo com o novo filho a direita (aux)
+	if(aux->altDireita > aux->altEsquerda) {
 
-	char op;
+		x->altDireita = aux->altDireita + 1;
 
-	fscanf(entrada, "%c %d\n", &op, &chave);
+	} else {
 
-	Nodo* raiz = criarNodo(chave);
+		x->altDireita = aux->altEsquerda + 1;	
+	}
 
-	while(ret != EOF) {
+	//atualiza altura esquerda do y de acordo com o novo filho a esquerda (x)
+	if(x->altDireita > x->altEsquerda) {
 
-		ret = fscanf(entrada, "%c %d\n", &op, &chave);
+		y->altEsquerda = x->altDireita + 1;
 
-		if(op == 'i') {
+	} else {
 
-			inserirNodo(raiz, chave);
+		x->altEsquerda = x->altEsquerda + 1;	
+	}
+
+	//retorna nova raiz (y)
+	return y;
+}
+
+Nodo* rotacionarDireita(Nodo* x){
+
+	//rotacionando
+	Nodo* y = x->esquerda;
+	Nodo* aux = y->direita;
+	x->esquerda = aux;
+	y->direita = x;
+
+	//ajuste de alturas
+
+	//atualiza altura esquerda do x de acordo com o novo filho a esquerda (aux)
+	if(aux->altDireita > aux->altEsquerda) {
+
+		x->altEsquerda = aux->altDireita + 1;
+
+	} else {
+
+		x->altEsquerda = aux->altEsquerda + 1;	
+	}
+
+	//atualiza altura direita do y de acordo com o novo filho a diteira (x)
+	if(x->altDireita > x->altEsquerda) {
+
+		y->altDireita = x->altDireita + 1;
+
+	} else {
+
+		x->altDireita = x->altEsquerda + 1;	
+	}
+
+	//retorna nova raiz (y)
+	return y;
+}
+
+Nodo* balancear(Nodo* x) {
+
+	int fbX = x->altDireita - x->altEsquerda;
+
+	//rotaçao para esquerda	
+	if(fbX == 2) {
+
+		//raiz da subarvore desbalanceada (direita)
+		Nodo* y = x->direita;
+
+		int fbY = y->altDireita - y->altEsquerda;
+		
+		if(fbY >= 0) {
+			//rotaçao simples
+			x = rotacionarEsquerda(x);
+
+		} else {
+			//rotaçao dupla
+			y = rotacionarDireita(y);
+			x = rotacionarEsquerda(x);	
+		}
+	}
+	
+	//rotaçao para direita
+	if(fbX == -2) {
+	
+		//raiz da subarvore desbalanceada (esquerda)
+		Nodo* y = x->esquerda;
+
+		int fbY = y->altDireita - y->altEsquerda;
+
+		if(fbY <= 0) {
+			//rotaçao simples
+			x = rotacionarDireita(x);
 			
-		} else if(op == 'r'){
-
-			removerNodo(&raiz, chave);
+		} else {
+			//rotaçao dupla
+			y = rotacionarEsquerda(y);	
+			x = rotacionarDireita(x);	
 		}
 	}
 
-
-	FILE* saida = fopen("out.txt", "w");
-
-	imprimirArvoreArquivo(saida, raiz);
-	
-	imprimirArvoreTerminal(raiz);
-	
-	return 0;
+	return x;
 }
 
