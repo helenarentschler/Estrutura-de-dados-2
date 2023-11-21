@@ -53,23 +53,21 @@ Nodo* criarNodo(int chave){
 	return novo;
 }
 
-int calcularAltura(Nodo *nodo){
-
-    if (nodo == NULL){
-        return -1;
-    }
-
-    nodo->altDireita = calcularAltura(nodo->direita);
-    nodo->altEsquerda = calcularAltura(nodo->esquerda);
-
-    if (nodo->altDireita > nodo->altEsquerda) {
-        return nodo->altDireita + 1;
-    }
-
-    return nodo->altEsquerda + 1;
+int max(int a, int b) {
+    return (a > b) ? a : b;
 }
 
+// Função para calcular e atribuir as alturas à esquerda e à direita para todos os nós da árvore
+void calcularAlturas(Nodo* nodo) {
+    if (nodo != NULL) {
+        calcularAlturas(nodo->esquerda); // Calcula as alturas à esquerda da subárvore esquerda
+        calcularAlturas(nodo->direita);  // Calcula as alturas à direita da subárvore direita
 
+        // Calcula as alturas à esquerda e à direita para o nó atual
+        nodo->altEsquerda = (nodo->esquerda != NULL) ? max(nodo->esquerda->altEsquerda, nodo->esquerda->altDireita) + 1 : 0;
+        nodo->altDireita = (nodo->direita != NULL) ? max(nodo->direita->altEsquerda, nodo->direita->altDireita) + 1 : 0;
+    }
+}
 
 Nodo* inserirNodo(Nodo* no, int chave) {
 
@@ -233,7 +231,7 @@ Nodo* balancear(Nodo* x) {
 		}
 	}
 
-	calcularAltura(x);
+	calcularAlturas(x);
 
 	return x;
 }
