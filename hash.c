@@ -7,46 +7,52 @@ typedef struct Hash {
 } Hash;
 
 int inserirElemento(int chave, Hash* tabela, int posicoes, int* qnt);
-void imprimirTabela(Hash* tabela, int posicoes);
+void imprimirTabela(Hash* tabela, int posicoes, FILE* arquivo, int qntComparacoes);
 void inicializarTabela(Hash* tabela, int posicoes);
-int buscarElemento(int chave, Hash* tabela, int posicoes);
+int buscarElemento(int chave, Hash* tabela, int posicoes, int* qntComparacoes);
 Hash* calcularCarga(Hash* tabela, int* qnt, int* posicoes);
 
 int main(){
 
-	int posicoes = 8;
+	int qntComparacoes = 0;
+	int posicoes = 100;
 	int qnt = 0;
+	
 	//tabela hash de 100 posiçoes
 	Hash* tabela = (Hash*) malloc(sizeof(Hash) * posicoes);	
-
+	
 	inicializarTabela(tabela, posicoes);
-	
-	inserirElemento( 16, tabela, posicoes, &qnt);
-	tabela = calcularCarga(tabela, &qnt, &posicoes);
-	inserirElemento( 23, tabela, posicoes, &qnt);
-	tabela = calcularCarga(tabela, &qnt, &posicoes);
-	inserirElemento( 41, tabela, posicoes, &qnt);
-	tabela = calcularCarga(tabela, &qnt, &posicoes);
-	inserirElemento( 25, tabela, posicoes, &qnt);
-	tabela = calcularCarga(tabela, &qnt, &posicoes);
-	inserirElemento( 39, tabela, posicoes, &qnt);
-	tabela = calcularCarga(tabela, &qnt, &posicoes);
-	inserirElemento( 90, tabela, posicoes, &qnt);
-	tabela = calcularCarga(tabela, &qnt, &posicoes);
 
-	imprimirTabela(tabela, posicoes);
+	FILE* entrada = fopen("in.txt", "r");
 
-	printf("qnt: %d\n", qnt);
-	printf("%d\n", buscarElemento(39, tabela, posicoes));
-	printf("%d", buscarElemento(60, tabela, posicoes));
-	
+	int chave = 0;
+
+	char op;
+
+	while(fscanf(entrada, "%c %d\n", &op, &chave) != EOF) {
+
+		if(op == 'i') {
+
+			inserirElemento( chave, tabela, posicoes, &qnt );
+			tabela = calcularCarga( tabela, &qnt, &posicoes);
+			
+		} else if(op == 'b'){
+
+			buscarElemento(chave, tabela, posicoes, &qntComparacoes);
+		}
+	}
+
+	FILE* saida = fopen("out.txt", "w");
+
+	imprimirTabela(tabela, posicoes, saida, qntComparacoes);
+		
 	return 0;
 }
 
 Hash* calcularCarga(Hash* tabela, int* qnt, int* posicoes) {
 
 	double div = (double) (*qnt) / (double) (*posicoes);
-	printf("%f", div);
+
 	if( div >= 0.7 ) {
 		
 		Hash* novaTabela = (Hash *) malloc(sizeof(Hash) * (*posicoes) * 2);
@@ -84,6 +90,7 @@ Hash* calcularCarga(Hash* tabela, int* qnt, int* posicoes) {
 	return tabela;
 }
 
+//incializa tabela com status L para todas as posiçoes
 void inicializarTabela(Hash* tabela, int posicoes) {
 
 	for( int i = 0; i < posicoes; i++ ) {
@@ -91,10 +98,12 @@ void inicializarTabela(Hash* tabela, int posicoes) {
 	}
 }
 
-void imprimirTabela(Hash* tabela, int posicoes) {
+void imprimirTabela(Hash* tabela, int posicoes, FILE* arquivo, int qntComparacoes) {
 
+	fprintf(arquivo, "Quantidade de comparaçoes na busca: %d\n", qntComparacoes);
+	
 	for( int i = 0; i < posicoes; i++ ) {
-		printf("chave: %d, status: %c\n", (tabela + i)->chave, (tabela + i)->status);
+		fprintf(arquivo, "chave: %d, status: %c\n", (tabela + i)->chave, (tabela + i)->status);
 	}
 }
 
@@ -122,7 +131,7 @@ int inserirElemento(int chave, Hash* tabela, int posicoes, int* qnt) {
 	return -1;
 }
 
-int buscarElemento(int chave, Hash* tabela, int posicoes) {
+int buscarElemento(int chave, Hash* tabela, int posicoes, int* qntComparacoes) {
 	
 	int i = 0;
 	int endInicial = chave % posicoes;
@@ -130,6 +139,8 @@ int buscarElemento(int chave, Hash* tabela, int posicoes) {
 	
 	while (i < posicoes) {
 
+		(*qntComparacoes)++;
+		
 		if((tabela + end)->status == 'L') {
 			return -1;
 		}
