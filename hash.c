@@ -15,7 +15,7 @@ Hash* calcularCarga(Hash* tabela, int* qnt, int* posicoes);
 int main(){
 
 	int qntComparacoes = 0;
-	int posicoes = 100;
+	int posicoes = 8;
 	int qnt = 0;
 	
 	//tabela hash de 100 posiçoes
@@ -42,7 +42,7 @@ int main(){
 		}
 	}
 
-	FILE* saida = fopen("out.txt", "w");
+	FILE* saida = fopen("saida.txt", "w");
 
 	imprimirTabela(tabela, posicoes, saida, qntComparacoes);
 		
@@ -59,14 +59,14 @@ Hash* calcularCarga(Hash* tabela, int* qnt, int* posicoes) {
 	
 		if(novaTabela) {
 		
-			int posicoesAntiga = *posicoes;
+			int qntPosicoesAntiga = *posicoes;
 			
 			(*posicoes) *= 2;
 			*qnt = 0;
 
 			inicializarTabela(novaTabela, *posicoes);
 			
-			for( int i = 0; i < posicoesAntiga; i++ ) {
+			for( int i = 0; i < qntPosicoesAntiga; i++ ) {
 				
 				if((tabela + i)->status != 'L') {
 				
@@ -76,7 +76,7 @@ Hash* calcularCarga(Hash* tabela, int* qnt, int* posicoes) {
 
 			free(tabela);
 	
-			return  novaTabela;
+			return novaTabela;
 			
 		} else {
 		
@@ -126,7 +126,7 @@ int inserirElemento(int chave, Hash* tabela, int posicoes, int* qnt) {
 		(*qnt)++;
 		
 		return end;	
-	} 
+	}
 
 	return -1;
 }

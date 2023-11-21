@@ -24,14 +24,15 @@ int main() {
 	raiz = inserirNodo(raiz, 90);
 	raiz = balancear(raiz);
 	raiz = inserirNodo(raiz, 30);
-	raiz = balancear(raiz);
+	raiz = balancear(raiz);	
 	raiz = inserirNodo(raiz, 80);
-	raiz = balancear(raiz);
+	raiz = balancear(raiz);	
 	raiz = inserirNodo(raiz, 10);
 	raiz = balancear(raiz);
 	raiz = inserirNodo(raiz, 100);
 	raiz = balancear(raiz);
-	imprimirArvore(raiz);
+
+	imprimirArvore(raiz); 
 	
 	return 0;
 }
@@ -52,24 +53,22 @@ Nodo* criarNodo(int chave){
 	return novo;
 }
 
-int calcularAltura(Nodo* no) {
+int calcularAltura(Nodo *nodo){
 
-	// se foi enviado NULL, quer dizer que o no pai tem altura 0 (-1 +1)
-	if(!no) {
-		return -1;
-	}
+    if (nodo == NULL){
+        return -1;
+    }
 
-	// se o no nao tem filhos, retorna 0 (sua propria altura é 0)
-	if(!no->esquerda && !no->direita) {
-		return 0;
-	}
+    nodo->altDireita = calcularAltura(nodo->direita);
+    nodo->altEsquerda = calcularAltura(nodo->esquerda);
 
-	int soma_esq = 1 + calcularAltura(no->esquerda);
-	int soma_dir = 1 + calcularAltura(no->direita);
+    if (nodo->altDireita > nodo->altEsquerda) {
+        return nodo->altDireita + 1;
+    }
 
-	// envia o valor maior de altura da subarvore
-	return soma_esq > soma_dir ?  soma_esq :  soma_dir;
+    return nodo->altEsquerda + 1;
 }
+
 
 
 Nodo* inserirNodo(Nodo* no, int chave) {
@@ -82,12 +81,10 @@ Nodo* inserirNodo(Nodo* no, int chave) {
 	if(chave > no->chave){
 	
 		no->direita = inserirNodo(no->direita, chave);
-		(no->altDireita)++;
 
 	} else {
 
 		no->esquerda = inserirNodo(no->esquerda, chave);
-		(no->altEsquerda)++;
 	}
 
 	return no;
@@ -100,7 +97,7 @@ void imprimirArvore(Nodo* no){
 	}
 
 	imprimirArvore(no->esquerda);
-	printf("%d %d %d \n", no->chave, no->altEsquerda, no->altDireita);
+	printf("at %d %d %d \n", no->chave, no->altEsquerda, no->altDireita);
 	imprimirArvore(no->direita);
 }
 
@@ -235,6 +232,8 @@ Nodo* balancear(Nodo* x) {
 			x = rotacionarDireita(x);	
 		}
 	}
+
+	calcularAltura(x);
 
 	return x;
 }
