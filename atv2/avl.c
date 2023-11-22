@@ -1,41 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct No {
-
-	int chave;
-	int altEsquerda;
-	int altDireita;
-	struct No* esquerda;
-	struct No* direita;
-} Nodo;
-
-Nodo* criarNodo(int chave);
-int calcularAltura(Nodo* no);
-Nodo* inserirNodo(Nodo* no, int chave);
-void imprimirArvore(Nodo* no);
-Nodo* buscarNodo(Nodo* no, int chave);
-Nodo* balancear(Nodo* x);
-
-int main() {
-
-	Nodo* raiz = NULL;
-
-	raiz = inserirNodo(raiz, 90);
-	raiz = balancear(raiz);
-	raiz = inserirNodo(raiz, 30);
-	raiz = balancear(raiz);	
-	raiz = inserirNodo(raiz, 80);
-	raiz = balancear(raiz);	
-	raiz = inserirNodo(raiz, 10);
-	raiz = balancear(raiz);
-	raiz = inserirNodo(raiz, 100);
-	raiz = balancear(raiz);
-
-	imprimirArvore(raiz); 
-	
-	return 0;
-}
+#include "avl.h"
 
 int maximo(int a, int b) {
 
@@ -99,19 +65,19 @@ Nodo* inserirNodo(Nodo* no, int chave) {
 	return no;
 }
 
-void imprimirArvore(Nodo* no){
+void imprimirArvore(Nodo* no, FILE* saida){
 
 	if(!no) {
 		return;	
 	}
 
-	imprimirArvore(no->esquerda);
-	printf("at %d %d %d \n", no->chave, no->altEsquerda, no->altDireita);
-	imprimirArvore(no->direita);
+	imprimirArvore(no->esquerda, saida);
+	fprintf(saida,"Chave:%d | Alt esq: %d | Alt dir: %d \n", no->chave, no->altEsquerda, no->altDireita);
+	imprimirArvore(no->direita, saida);
 }
 
 // param: raiz, chave para busca
-Nodo* buscarNodo(Nodo* no, int chave) {
+Nodo* buscarNodo(Nodo* no, int chave, int* qntComparacoes) {
 
 	if(no == NULL) {
 		return NULL;
@@ -121,13 +87,15 @@ Nodo* buscarNodo(Nodo* no, int chave) {
 		return no;
 	}
 
+	(*qntComparacoes)++;
+	
 	if(chave > no->chave){
 
-		return buscarNodo(no->direita, chave);
+		return buscarNodo(no->direita, chave, qntComparacoes);
 		
 	} else {
 		
-		return buscarNodo(no->esquerda, chave);
+		return buscarNodo(no->esquerda, chave,qntComparacoes);
 	}
 }
 
@@ -213,7 +181,7 @@ Nodo* balancear(Nodo* x) {
 	recalcularAlturas(x);
 
 	if(!x) {
-		return NULL;
+		return x;
 	}
 	
 	int fbX = x->altDireita - x->altEsquerda;

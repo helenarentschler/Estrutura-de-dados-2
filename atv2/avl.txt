@@ -1,0 +1,5 @@
+Chave:16 | Alt esq: 0 | Alt dir: 0 
+Chave:23 | Alt esq: 2 | Alt dir: 0 
+Chave:25 | Alt esq: 0 | Alt dir: 1 
+Chave:39 | Alt esq: 0 | Alt dir: 0 
+Chave:41 | Alt esq: 1 | Alt dir: 2 

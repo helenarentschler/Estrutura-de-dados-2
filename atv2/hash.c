@@ -1,54 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "hash.h"
-
-typedef struct Hash {
-	int chave;
-	char status;
-} Hash;
-
-int inserirElemento(int chave, Hash* tabela, int posicoes, int* qnt);
-void imprimirTabela(Hash* tabela, int posicoes, FILE* arquivo, int qntComparacoes);
-void inicializarTabela(Hash* tabela, int posicoes);
-int buscarElemento(int chave, Hash* tabela, int posicoes, int* qntComparacoes);
-Hash* calcularCarga(Hash* tabela, int* qnt, int* posicoes);
-
-int main(){
-
-	int qntComparacoes = 0;
-	int posicoes = 8;
-	int qnt = 0;
-	
-	//tabela hash de 100 posiçoes
-	Hash* tabela = (Hash*) malloc(sizeof(Hash) * posicoes);	
-	
-	inicializarTabela(tabela, posicoes);
-
-	FILE* entrada = fopen("in.txt", "r");
-
-	int chave = 0;
-
-	char op;
-
-	while(fscanf(entrada, "%c %d\n", &op, &chave) != EOF) {
-
-		if(op == 'i') {
-
-			inserirElemento( chave, tabela, posicoes, &qnt );
-			tabela = calcularCarga( tabela, &qnt, &posicoes);
-			
-		} else if(op == 'b'){
-
-			buscarElemento(chave, tabela, posicoes, &qntComparacoes);
-		}
-	}
-
-	FILE* saida = fopen("saida.txt", "w");
-
-	imprimirTabela(tabela, posicoes, saida, qntComparacoes);
-		
-	return 0;
-}
 
 Hash* calcularCarga(Hash* tabela, int* qnt, int* posicoes) {
 
