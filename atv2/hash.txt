@@ -1,9 +1,17 @@
-Quantidade de comparaçoes na busca: 5
-chave: 16, status: O
-chave: 41, status: O
-chave: 25, status: O
-chave: 39, status: O
+Quantidade de comparaçoes na busca: 1
+chave: 0, status: L
+chave: 65, status: O
+chave: 81, status: O
+chave: 0, status: L
+chave: 100, status: O
+chave: 5, status: O
+chave: 340, status: O
+chave: 7, status: O
+chave: 40, status: O
+chave: 0, status: L
+chave: 90, status: O
+chave: 10, status: O
 chave: 0, status: L
 chave: 0, status: L
-chave: 0, status: L
-chave: 23, status: O
+chave: 30, status: O
+chave: 79, status: O

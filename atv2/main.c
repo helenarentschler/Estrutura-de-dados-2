@@ -81,8 +81,9 @@ int executarAvl(FILE* entrada) {
 		if(op == 'i') {
 
 			raiz = inserirNodo(raiz, chave);
-			raiz = balancear(raiz);
-			
+			recalcularAlturas(raiz);
+			verificarDesbalanceamentos(raiz, &raiz);
+
 		} else if(op == 'b') {
 
 			buscarNodo(raiz, chave, &qntComparacoes);

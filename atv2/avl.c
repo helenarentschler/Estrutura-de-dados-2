@@ -76,6 +76,17 @@ void imprimirArvore(Nodo* no, FILE* saida){
 	imprimirArvore(no->direita, saida);
 }
 
+void imprimir(Nodo* no) {
+
+	if(!no) {
+		return;	
+	}
+
+	imprimir(no->esquerda);
+	printf("Chave:%d | Alt esq: %d | Alt dir: %d \n", no->chave, no->altEsquerda, no->altDireita);
+	imprimir(no->direita);
+}
+
 // param: raiz, chave para busca
 Nodo* buscarNodo(Nodo* no, int chave, int* qntComparacoes) {
 
@@ -176,9 +187,26 @@ Nodo* rotacionarDireita(Nodo* x){
 	return y;
 }
 
-Nodo* balancear(Nodo* x) {
 
-	recalcularAlturas(x);
+void verificarDesbalanceamentos(Nodo* raiz, Nodo** no) {
+
+	if(!*no){
+		return;
+	}
+	
+	verificarDesbalanceamentos(raiz, &(*no)->esquerda);
+	verificarDesbalanceamentos(raiz, &(*no)->direita);
+
+	int fb = (*no)->altDireita - (*no)->altEsquerda;
+	
+	if(abs(fb) == 2) {
+		*no = balancear(*no);			
+		recalcularAlturas(raiz);
+	}
+}
+
+
+Nodo* balancear(Nodo* x) {
 
 	if(!x) {
 		return x;
@@ -223,7 +251,7 @@ Nodo* balancear(Nodo* x) {
 			x = rotacionarDireita(x);	
 		}
 	}
-	
+
 	return x;
 }
 

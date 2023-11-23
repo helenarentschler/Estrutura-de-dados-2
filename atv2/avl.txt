@@ -1,5 +1,11 @@
-Chave:16 | Alt esq: 0 | Alt dir: 0 
-Chave:23 | Alt esq: 2 | Alt dir: 0 
-Chave:25 | Alt esq: 0 | Alt dir: 1 
-Chave:39 | Alt esq: 0 | Alt dir: 0 
-Chave:41 | Alt esq: 1 | Alt dir: 2 
+Chave:5 | Alt esq: 0 | Alt dir: 1 
+Chave:7 | Alt esq: 0 | Alt dir: 0 
+Chave:10 | Alt esq: 2 | Alt dir: 2 
+Chave:30 | Alt esq: 0 | Alt dir: 1 
+Chave:40 | Alt esq: 0 | Alt dir: 0 
+Chave:65 | Alt esq: 3 | Alt dir: 3 
+Chave:79 | Alt esq: 0 | Alt dir: 0 
+Chave:81 | Alt esq: 1 | Alt dir: 2 
+Chave:90 | Alt esq: 0 | Alt dir: 0 
+Chave:100 | Alt esq: 1 | Alt dir: 1 
+Chave:340 | Alt esq: 0 | Alt dir: 0 
