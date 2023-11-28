@@ -3,9 +3,11 @@
 
 #include "hash.h"
 #include "avl.h"
+#include "hash-encadeada.h"
 
 int executarAvl(FILE* entrada);
 int executarHash(FILE* entrada);
+
 
 int main() {
 
@@ -20,6 +22,7 @@ int main() {
 
 	return 0;
 }
+
 
 int executarHash(FILE* entrada) {
 	
@@ -56,6 +59,55 @@ int executarHash(FILE* entrada) {
 
 	//imprimindo tabela Hash no arquivo de saida
 	imprimirTabela(tabela, posicoes, saida, qntComparacoes);
+	
+	return qntComparacoes;
+};
+
+
+int executarHashEncadeada(FILE* entrada) {
+
+	rewind(entrada);
+
+	clock_t tempoHashEncadeada = clock();
+	
+	int qntComparacoes = 0;
+	
+	//tabela hash
+	Encad* tabela = (Encad*) malloc(sizeof(Encad) * 100);	
+	
+	inicializarTabelaE(tabela);
+
+	//chaves lidas do arquivo
+	int chave = 0;
+
+	//opçao de operaçao: i - inserir e b - buscar
+	char op;
+
+	while(fscanf(entrada, "%c %d\n", &op, &chave) != EOF) {
+
+		if(op == 'i') {
+
+			inserirElementoE(chave, tabela);
+			
+		} else if(op == 'b'){
+
+			buscarElementoE(chave, tabela, &qntComparacoes);
+		}
+	}
+
+	//abrindo arquivo hash.txt de saida
+	FILE* saida = fopen("hashEncadeada.txt", "w");
+
+	//imprimindo tabela Hash no arquivo de saida
+
+	tempoHashEncadeada = clock() - tempoHashEncadeada;
+
+	double tempoFinal = ((double)tempoHashEncadeada)/CLOCKS_PER_SEC;
+
+	fprintf(saida, "tempo: %f\n", tempoFinal);
+
+	imprimirTabelaE(tabela, saida, qntComparacoes);
+
 	
 	return qntComparacoes;
 };
@@ -98,3 +150,4 @@ int executarAvl(FILE* entrada) {
 	
 	return qntComparacoes;
 };
+
