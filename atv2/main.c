@@ -13,7 +13,7 @@ int executarHashEncadeada(FILE* entrada);
 int main() {
 
 	//lendo arquivo de entrada
-	FILE* entrada = fopen("in3.txt", "r");
+	FILE* entrada = fopen("in1.txt", "r");
 
 	int comparacoesHash = executarHash(entrada);
 	int comparacoesHashEncadeada = executarHashEncadeada(entrada);
