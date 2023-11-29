@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "hash.h"
 #include "avl.h"
@@ -7,17 +8,19 @@
 
 int executarAvl(FILE* entrada);
 int executarHash(FILE* entrada);
-
+int executarHashEncadeada(FILE* entrada);
 
 int main() {
 
 	//lendo arquivo de entrada
-	FILE* entrada = fopen("in.txt", "r");
+	FILE* entrada = fopen("in3.txt", "r");
 
 	int comparacoesHash = executarHash(entrada);
+	int comparacoesHashEncadeada = executarHashEncadeada(entrada);
 	int comparacoesAvl = executarAvl(entrada);
 
-	printf("comparaçoes hash: %d\n", comparacoesHash);
+	printf("comparaçoes hash: %d\n", comparacoesHash );
+	printf("comparaçoes hashEncadeada: %d\n", comparacoesHashEncadeada);
 	printf("comparaçoes avl: %d\n", comparacoesAvl);
 
 	return 0;
@@ -27,8 +30,9 @@ int main() {
 int executarHash(FILE* entrada) {
 	
 	int qntComparacoes = 0;
-	int posicoes = 8;
+	int posicoes = 100;
 	int qnt = 0;
+	float tempoFinal = 0;		
 	
 	//tabela hash
 	Hash* tabela = (Hash*) malloc(sizeof(Hash) * posicoes);	
@@ -50,9 +54,17 @@ int executarHash(FILE* entrada) {
 			
 		} else if(op == 'b'){
 
+			clock_t tempoHash = clock();
+
 			buscarElemento(chave, tabela, posicoes, &qntComparacoes);
+
+			float tempo = ((double) (clock() - tempoHash)) / CLOCKS_PER_SEC;
+
+			tempoFinal += tempo;
 		}
 	}
+
+	printf("tempo das buscas na Hash: %f\n", tempoFinal);
 
 	//abrindo arquivo hash.txt de saida
 	FILE* saida = fopen("hash.txt", "w");
@@ -67,15 +79,15 @@ int executarHash(FILE* entrada) {
 int executarHashEncadeada(FILE* entrada) {
 
 	rewind(entrada);
-
-	clock_t tempoHashEncadeada = clock();
 	
 	int qntComparacoes = 0;
-	
+	int posicoes = 100;
+	float tempoFinal = 0;
+
 	//tabela hash
-	Encad* tabela = (Encad*) malloc(sizeof(Encad) * 100);	
+	Encad* tabela = (Encad*) malloc(sizeof(Encad) * posicoes);	
 	
-	inicializarTabelaE(tabela);
+	inicializarTabelaE(tabela, posicoes);
 
 	//chaves lidas do arquivo
 	int chave = 0;
@@ -87,27 +99,27 @@ int executarHashEncadeada(FILE* entrada) {
 
 		if(op == 'i') {
 
-			inserirElementoE(chave, tabela);
+			inserirElementoE(chave, tabela, posicoes);
 			
 		} else if(op == 'b'){
+			
+			clock_t tempoHashEncadeada = clock();
 
-			buscarElementoE(chave, tabela, &qntComparacoes);
+			buscarElementoE(chave, tabela, &qntComparacoes, posicoes);
+
+			float tempo = ((double) (clock() - tempoHashEncadeada))/CLOCKS_PER_SEC;
+
+			tempoFinal += tempo;
 		}
 	}
+
+	printf("tempo das buscas na Hash encadeada: %f\n", tempoFinal);
 
 	//abrindo arquivo hash.txt de saida
 	FILE* saida = fopen("hashEncadeada.txt", "w");
 
 	//imprimindo tabela Hash no arquivo de saida
-
-	tempoHashEncadeada = clock() - tempoHashEncadeada;
-
-	double tempoFinal = ((double)tempoHashEncadeada)/CLOCKS_PER_SEC;
-
-	fprintf(saida, "tempo: %f\n", tempoFinal);
-
-	imprimirTabelaE(tabela, saida, qntComparacoes);
-
+	imprimirTabelaE(tabela, saida, qntComparacoes,posicoes);
 	
 	return qntComparacoes;
 };
@@ -118,7 +130,8 @@ int executarAvl(FILE* entrada) {
 	rewind(entrada);
 	
 	int qntComparacoes = 0;
-	
+	float tempoFinal = 0;
+
 	//avl
 	Nodo* raiz = NULL;
 
@@ -138,9 +151,17 @@ int executarAvl(FILE* entrada) {
 
 		} else if(op == 'b') {
 
+			clock_t tempoArvore = clock();
+
 			buscarNodo(raiz, chave, &qntComparacoes);
+
+			float tempo = ((double) (clock() - tempoArvore))/CLOCKS_PER_SEC;
+
+			tempoFinal += tempo;
 		}
 	}
+
+	printf("tempo das buscas na AVL: %f\n", tempoFinal);
 
 	//abrindo arquivo avl.txt de saida
 	FILE* saida = fopen("avl.txt", "w");

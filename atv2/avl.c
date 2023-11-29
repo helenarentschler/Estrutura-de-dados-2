@@ -90,6 +90,8 @@ void imprimir(Nodo* no) {
 // param: raiz, chave para busca
 Nodo* buscarNodo(Nodo* no, int chave, int* qntComparacoes) {
 
+	(*qntComparacoes)++;
+
 	if(no == NULL) {
 		return NULL;
 	}
@@ -97,8 +99,6 @@ Nodo* buscarNodo(Nodo* no, int chave, int* qntComparacoes) {
 	if(no->chave == chave) {
 		return no;
 	}
-
-	(*qntComparacoes)++;
 	
 	if(chave > no->chave){
 

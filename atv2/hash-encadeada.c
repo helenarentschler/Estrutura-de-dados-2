@@ -3,19 +3,19 @@
 
 #include "hash-encadeada.h"
 
-void inicializarTabelaE(Encad* tabela) {
+void inicializarTabelaE(Encad* tabela, int posicoes) {
 
-	for(int i = 0; i < 100; i++ ) {
-		(tabela + i)->chave = 0;
+	for(int i = 0; i < posicoes; i++ ) {
+		(tabela + i)->chave = -1;
         (tabela + i)->proximo = NULL;
 	}
 }
 
-void imprimirTabelaE(Encad* tabela, FILE* arquivo, int qntComparacoes) {
+void imprimirTabelaE(Encad* tabela, FILE* arquivo, int qntComparacoes, int posicoes) {
 
 	fprintf(arquivo, "Quantidade de comparaçoes na busca: %d\n", qntComparacoes);
 	
-	for( int i = 0; i < 100; i++ ) {
+	for( int i = 0; i < posicoes; i++ ) {
         
         Encad* n = (tabela + i)->proximo;
 
@@ -26,9 +26,9 @@ void imprimirTabelaE(Encad* tabela, FILE* arquivo, int qntComparacoes) {
 	}
 }
 
-void inserirElementoE(int chave, Encad* tabela) {
+void inserirElementoE(int chave, Encad* tabela, int posicoes) {
 	
-	int end = chave % 100;
+	int end = chave % posicoes;
 	
     Encad* auxiliar = (Encad*) malloc(sizeof(Encad));
 
@@ -39,9 +39,9 @@ void inserirElementoE(int chave, Encad* tabela) {
     }
 }
 
-int buscarElementoE(int chave, Encad* tabela, int* qntComparacoes) {
+int buscarElementoE(int chave, Encad* tabela, int* qntComparacoes, int posicoes) {
 	
-	int end = chave % 100;
+	int end = chave % posicoes;
     Encad* aux = (tabela + end);
 	
 	while (aux->proximo) {
@@ -49,11 +49,9 @@ int buscarElementoE(int chave, Encad* tabela, int* qntComparacoes) {
 		(*qntComparacoes)++;
 		
         if(aux->chave == chave){
-            printf("Elemento encontrado.\n");
             return 0;
         }
         aux = aux->proximo;
 	}
-    printf("Elemento não encontrado.\n");
 	return -1;	
 }
